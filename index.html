@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ankit Khandelwal | Cloud & DevOps Engineer</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Space Grotesk & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            deepBg: '#05070B',
+            panelBg: '#090D14',
+            cyberCyan: '#00F0FF',
+            cyberBlue: '#0072FF',
+            neonGreen: '#00FF66',
+            terminalAmber: '#FFB800',
+            gridBorder: 'rgba(0, 240, 255, 0.12)'
+          },
+          fontFamily: {
+            sans: ['Space Grotesk', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #05070B;
+      color: #E2E8F0;
+      font-family: 'Space Grotesk', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Cyber Grid Canvas & Scanlines */
+    .cyber-grid {
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, rgba(0, 240, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 240, 255, 0.04) 1px, transparent 1px);
+    }
+
+    .scanline {
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+      background-size: 100% 3px, 6px 100%;
+      pointer-events: none;
+    }
+
+    /* Glassmorphism Panels */
+    .dashboard-panel {
+      background: rgba(9, 13, 20, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(0, 240, 255, 0.12);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+    }
+
+    .dashboard-panel:hover {
+      border-color: rgba(0, 240, 255, 0.35);
+      box-shadow: 0 0 25px -5px rgba(0, 240, 255, 0.18);
+    }
+
+    /* Smooth Floating Animation for Right Profile Card */
+    @keyframes floatUpDown {
+      0%, 100% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-16px);
+      }
+    }
+
+    .animate-float {
+      animation: floatUpDown 6s ease-in-out infinite;
+    }
+
+    /* Animated Running Cyber Beam Grid in Card Background */
+    @keyframes moveCircuit {
+      0% {
+        background-position: 0 0;
+      }
+      100% {
+        background-position: 0 80px;
+      }
+    }
+
+    .animated-circuit-bg {
+      background-size: 28px 28px;
+      background-image: 
+        linear-gradient(to right, rgba(0, 240, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 240, 255, 0.08) 1px, transparent 1px);
+      animation: moveCircuit 5s linear infinite;
+    }
+
+    /* Neon Radar Scanner Beam */
+    @keyframes radarScan {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .radar-spin {
+      animation: radarScan 9s linear infinite;
+    }
+
+    /* Flowing lines in pipeline */
+    @keyframes pulseData {
+      0% { stroke-dashoffset: 100; }
+      100% { stroke-dashoffset: 0; }
+    }
+
+    .flowing-data {
+      stroke-dasharray: 8, 8;
+      animation: pulseData 3s linear infinite;
+    }
+
+    /* Glitch / Glow utility */
+    .cyan-glow {
+      text-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+    }
+
+    .tilt-card {
+      transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s;
+      transform-style: preserve-3d;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #05070B;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #152238;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #00F0FF;
+    }
+  </style>
+</head>
+<body class="cyber-grid relative selection:bg-cyberCyan selection:text-black">
+
+  <!-- Atmospheric Background Overlays -->
+  <div class="fixed inset-0 scanline z-50 pointer-events-none"></div>
+  <canvas id="particle-canvas" class="fixed inset-0 z-0 pointer-events-none"></canvas>
+  <div class="fixed -top-40 left-1/4 w-[600px] h-[600px] bg-cyberCyan/10 blur-[180px] rounded-full pointer-events-none z-0"></div>
+  <div class="fixed top-1/2 -right-40 w-[500px] h-[500px] bg-cyberBlue/10 blur-[200px] rounded-full pointer-events-none z-0"></div>
+
+  <!-- NAVIGATION -->
+  <header class="fixed top-0 left-0 w-full z-40 bg-[#05070B]/85 backdrop-blur-md border-b border-gridBorder transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <a href="#hero" class="flex items-center space-x-2 text-cyberCyan font-mono font-bold tracking-wider text-sm sm:text-base group">
+        <span class="text-neonGreen">&gt;</span>
+        <span class="group-hover:text-white transition">ANKIT.DEV</span>
+        <span class="inline-block w-1.5 h-3.5 bg-cyberCyan animate-pulse"></span>
+      </a>
+
+      <!-- Desktop Links -->
+      <nav class="hidden lg:flex items-center space-x-6 text-xs font-mono uppercase tracking-widest text-zinc-400">
+        <a href="#hero" class="hover:text-cyberCyan transition">Home</a>
+        <a href="#about" class="hover:text-cyberCyan transition">About</a>
+        <a href="#skills" class="hover:text-cyberCyan transition">Skills</a>
+        <a href="#aws" class="hover:text-cyberCyan transition">AWS.Core</a>
+        <a href="#pipeline" class="hover:text-cyberCyan transition">Pipeline</a>
+        <a href="#projects" class="hover:text-cyberCyan transition">Projects</a>
+        <a href="#specs" class="hover:text-cyberCyan transition">Specs</a>
+        <a href="#roadmap" class="hover:text-cyberCyan transition">Roadmap</a>
+        <a href="#contact" class="hover:text-cyberCyan transition">Contact</a>
+      </nav>
+
+      <!-- Operational Status Badge & Action -->
+      <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-2 text-[10px] font-mono px-2.5 py-1 rounded border border-neonGreen/30 bg-neonGreen/5 text-neonGreen">
+          <span class="w-1.5 h-1.5 rounded-full bg-neonGreen animate-ping"></span>
+          <span>● ONLINE</span>
+        </div>
+        
+        <!-- Mobile menu toggler -->
+        <button id="mobile-menu-btn" class="lg:hidden text-zinc-400 hover:text-cyberCyan p-1">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-nav" class="hidden lg:hidden border-b border-gridBorder bg-panelBg/95 px-6 py-4 font-mono text-xs space-y-3">
+      <a href="#hero" class="block text-zinc-300 hover:text-cyberCyan">/HOME</a>
+      <a href="#about" class="block text-zinc-300 hover:text-cyberCyan">/ABOUT</a>
+      <a href="#skills" class="block text-zinc-300 hover:text-cyberCyan">/SKILLS</a>
+      <a href="#aws" class="block text-zinc-300 hover:text-cyberCyan">/AWS.CORE</a>
+      <a href="#pipeline" class="block text-zinc-300 hover:text-cyberCyan">/PIPELINE</a>
+      <a href="#projects" class="block text-zinc-300 hover:text-cyberCyan">/PROJECTS</a>
+      <a href="#specs" class="block text-zinc-300 hover:text-cyberCyan">/SPECS</a>
+      <a href="#roadmap" class="block text-zinc-300 hover:text-cyberCyan">/ROADMAP</a>
+      <a href="#contact" class="block text-zinc-300 hover:text-cyberCyan">/CONTACT</a>
+    </div>
+  </header>
+
+  <!-- MAIN WRAPPER -->
+  <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-28 sm:space-y-36 pt-24">
+
+    <!-- HERO SECTION -->
+    <section id="hero" class="min-h-[85vh] flex flex-col justify-center pt-8 sm:pt-14">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        
+        <!-- Left Hero Content -->
+        <div class="lg:col-span-7 space-y-6">
+          <div class="inline-flex items-center space-x-2 text-[11px] font-mono tracking-widest text-neonGreen uppercase bg-neonGreen/10 border border-neonGreen/20 px-3 py-1 rounded">
+            <span class="w-2 h-2 rounded-full bg-neonGreen animate-pulse"></span>
+            <span>SYSTEM.ONLINE &nbsp;|&nbsp; CLOUD.ACTIVE</span>
+          </div>
+
+          <div class="space-y-2">
+            <h1 class="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white uppercase font-mono">
+              ANKIT <br />
+              <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyberCyan via-blue-400 to-indigo-400 cyan-glow">
+                KHANDELWAL
+              </span>
+            </h1>
+            <p class="text-lg sm:text-xl font-mono text-zinc-400 font-medium">
+              Cloud &amp; DevOps Engineer
+            </p>
+          </div>
+
+          <!-- Dynamic Typing Text Banner -->
+          <div class="h-8 flex items-center font-mono text-sm sm:text-base text-neonGreen">
+            <span class="text-zinc-500 mr-2">&gt;</span>
+            <span id="role-cycler" class="border-r-2 border-neonGreen pr-1 font-bold"></span>
+          </div>
+
+          <p class="text-zinc-400 text-sm sm:text-base leading-relaxed max-w-xl">
+            Building reliable cloud infrastructure, automating deployments, and engineering scalable systems with enterprise-grade resilience and zero-downtime velocity.
+          </p>
+
+          <!-- Core Skills Tags -->
+          <div class="flex flex-wrap gap-2 pt-1 font-mono text-[11px]">
+            <span class="px-2 py-0.5 rounded bg-panelBg border border-gridBorder text-cyberCyan">AWS</span>
+            <span class="px-2 py-0.5 rounded bg-panelBg border border-gridBorder text-zinc-300">Linux</span>
+            <span class="px-2 py-0.5 rounded bg-panelBg border border-gridBorder text-zinc-300">Docker</span>
+            <span class="px-2 py-0.5 rounded bg-panelBg border border-gridBorder text-zinc-300">Kubernetes</span>
+            <span class="px-2 py-0.5 rounded bg-panelBg border border-gridBorder text-zinc-300">CI/CD</span>
+            <span class="px-2 py-0.5 rounded bg-panelBg border border-gridBorder text-zinc-300">Terraform</span>
+            <span class="px-2 py-0.5 rounded bg-panelBg border border-gridBorder text-zinc-300">Python</span>
+            <span class="px-2 py-0.5 rounded bg-panelBg border border-gridBorder text-zinc-300">Bash</span>
+          </div>
+
+          <!-- CTAs -->
+          <div class="flex flex-wrap items-center gap-4 pt-4">
+            <a href="#projects" class="px-6 py-3 bg-cyberCyan text-black font-mono font-bold text-xs uppercase tracking-wider rounded hover:bg-white hover:shadow-[0_0_20px_rgba(0,240,255,0.8)] transition duration-200 flex items-center gap-2">
+              <i data-lucide="layers" class="w-4 h-4"></i>
+              <span>View Projects</span>
+            </a>
+            
+            <a href="#resume" class="px-6 py-3 dashboard-panel text-zinc-300 font-mono text-xs uppercase tracking-wider rounded hover:text-white hover:border-cyberCyan transition flex items-center gap-2">
+              <i data-lucide="file-text" class="w-4 h-4 text-cyberCyan"></i>
+              <span>Download Resume</span>
+            </a>
+
+            <a href="https://github.com/Ankit869-debug" target="_blank" rel="noopener noreferrer" class="font-mono text-xs text-zinc-400 hover:text-cyberCyan flex items-center gap-1 transition ml-2">
+              <span>GITHUB</span>
+              <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- RIGHT SIDE: FLOATING AVATAR WITH ANIMATED BACKGROUND FLOW LINES & TOPOLOGY HUD -->
+        <div class="lg:col-span-5 flex justify-center">
+          <div class="animate-float w-full max-w-md">
+            
+            <!-- Futuristic Holographic Container -->
+            <div class="dashboard-panel rounded-2xl p-6 sm:p-7 relative overflow-hidden border border-cyberCyan/30 shadow-[0_0_40px_rgba(0,240,255,0.18)]">
+              
+              <!-- Animated Background Circuit / Grid Flow Lines -->
+              <div class="absolute inset-0 animated-circuit-bg pointer-events-none opacity-40"></div>
+
+              <!-- Holographic Rotating Laser Sweep Line -->
+              <div class="absolute -inset-[50%] radar-spin pointer-events-none opacity-25">
+                <div class="w-full h-full bg-gradient-to-tr from-cyberCyan/30 via-transparent to-transparent"></div>
+              </div>
+
+              <!-- Top Terminal Header Strip -->
+              <div class="relative z-10 flex items-center justify-between border-b border-gridBorder pb-3 text-xs font-mono text-zinc-400 mb-5">
+                <span class="flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-cyberCyan animate-ping"></span>
+                  <span class="text-white font-semibold">INFRA_OPERATOR // LIVE</span>
+                </span>
+                <span class="text-[10px] text-neonGreen font-mono bg-neonGreen/10 border border-neonGreen/30 px-2 py-0.5 rounded">PORT: 443_SSL</span>
+              </div>
+
+              <!-- Avatar & Glow Halo Section -->
+              <div class="relative z-10 flex flex-col items-center justify-center my-2">
+                <div class="relative group">
+                  
+                  <!-- Outer Pulsing Glow Ring -->
+                  <div class="absolute -inset-2.5 rounded-full bg-gradient-to-r from-cyberCyan via-blue-500 to-neonGreen opacity-75 blur-md group-hover:opacity-100 transition duration-700"></div>
+
+                  <!-- Profile Image Frame -->
+                  <div class="relative w-44 h-44 sm:w-48 sm:h-48 rounded-full overflow-hidden border-2 border-cyberCyan/90 shadow-[0_0_30px_rgba(0,240,255,0.4)] bg-[#090D14]">
+                    <img 
+                      src="file_00000000ec0c720b95b0a47e3fd7a93e.png" 
+                      alt="Ankit Khandelwal - Cloud & DevOps Engineer" 
+                      class="w-full h-full object-cover object-center transform group-hover:scale-105 transition duration-500"
+                    />
+                  </div>
+
+                  <!-- Small Corner Hologram Badge -->
+                  <div class="absolute bottom-1 right-2 w-7 h-7 rounded-full bg-[#05070B] border-2 border-neonGreen flex items-center justify-center text-neonGreen shadow-md">
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                  </div>
+                </div>
+
+                <!-- Identity Sub-Label -->
+                <div class="text-center mt-4 space-y-1">
+                  <h3 class="text-white font-mono font-bold text-sm tracking-wide">ANKIT KHANDELWAL</h3>
+                  <p class="text-[11px] font-mono text-cyberCyan">AWS • KUBERNETES • TERRAFORM</p>
+                </div>
+              </div>
+
+              <!-- Animated Data Telemetry Streamers -->
+              <div class="relative z-10 mt-5 pt-4 border-t border-gridBorder grid grid-cols-3 gap-2 text-center font-mono text-[10px]">
+                <div class="p-2 bg-panelBg/80 rounded border border-gridBorder/80">
+                  <span class="text-zinc-500 block">UPTIME</span>
+                  <span class="text-neonGreen font-bold">99.99%</span>
+                </div>
+                <div class="p-2 bg-panelBg/80 rounded border border-gridBorder/80">
+                  <span class="text-zinc-500 block">PODS</span>
+                  <span class="text-cyberCyan font-bold">HEALTHY</span>
+                </div>
+                <div class="p-2 bg-panelBg/80 rounded border border-gridBorder/80">
+                  <span class="text-zinc-500 block">IaC DRIFT</span>
+                  <span class="text-white font-bold">0.00%</span>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ABOUT ME / WHOAMI -->
+    <section id="about" class="space-y-6">
+      <div class="flex items-center space-x-3 text-xs font-mono text-cyberCyan">
+        <span>01 // IDENTITY DISCOVERY</span>
+        <div class="h-px bg-gridBorder flex-grow"></div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Terminal Command Box -->
+        <div class="lg:col-span-7 dashboard-panel rounded-xl p-5 sm:p-6 font-mono text-xs sm:text-sm">
+          <div class="flex items-center justify-between border-b border-gridBorder pb-3 mb-4 text-zinc-500">
+            <div class="flex space-x-2">
+              <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+              <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+              <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+            </div>
+            <span>bash — 80x24</span>
+          </div>
+
+          <div class="space-y-3 text-zinc-300">
+            <p class="text-neonGreen">$ whoami</p>
+            <div class="pl-3 border-l-2 border-cyberCyan/40 space-y-1.5 text-zinc-300">
+              <p><span class="text-zinc-500">&gt; Name:</span> Ankit Khandelwal</p>
+              <p><span class="text-zinc-500">&gt; Role:</span> Cloud &amp; DevOps Engineer</p>
+              <p><span class="text-zinc-500">&gt; Cloud:</span> AWS (EC2, S3, IAM, VPC, CloudWatch)</p>
+              <p><span class="text-zinc-500">&gt; OS:</span> Linux (Ubuntu, RHEL, Alpine)</p>
+              <p><span class="text-zinc-500">&gt; Containers:</span> Docker / Kubernetes</p>
+              <p><span class="text-zinc-500">&gt; CI/CD:</span> Jenkins / GitHub Actions</p>
+              <p><span class="text-zinc-500">&gt; IaC:</span> Terraform</p>
+              <p><span class="text-zinc-500">&gt; Scripting:</span> Python / Bash</p>
+              <p><span class="text-zinc-500">&gt; Status:</span> <span class="text-neonGreen">Building &amp; Automating</span></p>
+            </div>
+            <p class="text-zinc-500 pt-2">$ <span class="text-cyberCyan">echo $MISSION</span></p>
+            <p class="text-cyberCyan font-bold tracking-wider">BUILD → DEPLOY → AUTOMATE → SCALE</p>
+          </div>
+        </div>
+
+        <!-- Professional Narrative Card -->
+        <div class="lg:col-span-5 dashboard-panel rounded-xl p-6 space-y-4">
+          <div class="flex items-center space-x-2 text-xs font-mono text-zinc-400 border-b border-gridBorder pb-3">
+            <i data-lucide="terminal" class="w-4 h-4 text-cyberCyan"></i>
+            <span>EXECUTIVE_OVERVIEW</span>
+          </div>
+          <h3 class="text-xl font-bold text-white">Engineering Resilient Cloud Ecosystems</h3>
+          <p class="text-zinc-400 text-sm leading-relaxed">
+            Cloud &amp; DevOps enthusiast focused on cloud infrastructure, automation, containerization, CI/CD, and scalable deployment systems.
+          </p>
+          <p class="text-zinc-400 text-sm leading-relaxed">
+            Passionate about reducing deployment friction through Infrastructure as Code, continuous integration pipelines, and proactive cloud observability.
+          </p>
+          
+          <div class="pt-2 grid grid-cols-2 gap-3 font-mono text-[11px]">
+            <div class="p-3 bg-panelBg rounded border border-gridBorder">
+              <span class="text-zinc-500 block text-[10px]">PHILOSOPHY</span>
+              <span class="text-white font-medium">Zero-Manual Drift</span>
+            </div>
+            <div class="p-3 bg-panelBg rounded border border-gridBorder">
+              <span class="text-zinc-500 block text-[10px]">METHOD</span>
+              <span class="text-white font-medium">GitOps &amp; IaC First</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CLOUD & DEVOPS SKILLS (INFRASTRUCTURE MAP) -->
+    <section id="skills" class="space-y-8">
+      <div class="flex items-center space-x-3 text-xs font-mono text-cyberCyan">
+        <span>02 // CAPABILITY MATRIX</span>
+        <div class="h-px bg-gridBorder flex-grow"></div>
+      </div>
+
+      <div class="text-center max-w-2xl mx-auto space-y-2">
+        <h2 class="text-2xl sm:text-4xl font-bold text-white uppercase font-mono tracking-tight">
+          INFRASTRUCTURE MAP
+        </h2>
+        <p class="text-xs sm:text-sm text-zinc-400 font-mono">
+          Interactive technology constellation centered on automated orchestration.
+        </p>
+      </div>
+
+      <!-- Skills Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        
+        <!-- AWS -->
+        <div class="dashboard-panel rounded-lg p-5 space-y-3 group hover:border-cyberCyan transition">
+          <div class="flex items-center justify-between">
+            <div class="w-9 h-9 rounded bg-cyberCyan/10 border border-cyberCyan/30 flex items-center justify-center text-cyberCyan group-hover:scale-110 transition">
+              <i data-lucide="cloud" class="w-5 h-5"></i>
+            </div>
+            <span class="text-[10px] font-mono text-zinc-500">CLOUD</span>
+          </div>
+          <h4 class="font-mono text-sm font-bold text-white">AWS</h4>
+          <p class="text-xs text-zinc-400">Core architecture, VPC networks, S3 storage, and compute isolation.</p>
+        </div>
+
+        <!-- Linux -->
+        <div class="dashboard-panel rounded-lg p-5 space-y-3 group hover:border-cyberCyan transition">
+          <div class="flex items-center justify-between">
+            <div class="w-9 h-9 rounded bg-cyberCyan/10 border border-cyberCyan/30 flex items-center justify-center text-cyberCyan group-hover:scale-110 transition">
+              <i data-lucide="server" class="w-5 h-5"></i>
+            </div>
+            <span class="text-[10px] font-mono text-zinc-500">CORE OS</span>
+          </div>
+          <h4 class="font-mono text-sm font-bold text-white">Linux</h4>
+          <p class="text-xs text-zinc-400">Kernel tuning, system administration, processes, permissions &amp; shell.</p>
+        </div>
+
+        <!-- Docker -->
+        <div class="dashboard-panel rounded-lg p-5 space-y-3 group hover:border-cyberCyan transition">
+          <div class="flex items-center justify-between">
+            <div class="w-9 h-9 rounded bg-cyberCyan/10 border border-cyberCyan/30 flex items-center justify-center text-cyberCyan group-hover:scale-110 transition">
+              <i data-lucide="box" class="w-5 h-5"></i>
+            </div>
+            <span class="text-[10px] font-mono text-zinc-500">RUNTIME</span>
+          </div>
+          <h4 class="font-mono text-sm font-bold text-white">Docker</h4>
+          <p class="text-xs text-zinc-400">Multi-stage builds, container isolation, and microservices packaging.</p>
+        </div>
+
+        <!-- Kubernetes -->
+        <div class="dashboard-panel rounded-lg p-5 space-y-3 group hover:border-cyberCyan transition">
+          <div class="flex items-center justify-between">
+            <div class="w-9 h-9 rounded bg-cyberCyan/10 border border-cyberCyan/30 flex items-center justify-center text-cyberCyan group-hover:scale-110 transition">
+              <i data-lucide="anchor" class="w-5 h-5"></i>
+            </div>
+            <span class="text-[10px] font-mono text-zinc-500">ORCHESTRATION</span>
+          </div>
+          <h4 class="font-mono text-sm font-bold text-white">Kubernetes</h4>
+          <p class="text-xs text-zinc-400">Cluster autoscaling, deployments, ingress routing &amp; service meshes.</p>
+        </div>
+
+        <!-- Jenkins -->
+        <div class="dashboard-panel rounded-lg p-5 space-y-3 group hover:border-cyberCyan transition">
+          <div class="flex items-center justify-between">
+            <div class="w-9 h-9 rounded bg-cyberCyan/10 border border-cyberCyan/30 flex items-center justify-center text-cyberCyan group-hover:scale-110 transition">
+              <i data-lucide="cpu" class="w-5 h-5"></i>
+            </div>
+            <span class="text-[10px] font-mono text-zinc-500">CI/CD</span>
+          </div>
+          <h4 class="font-mono text-sm font-bold text-white">Jenkins</h4>
+          <p class="text-xs text-zinc-400">Declarative pipelines, automated triggers, artifact creation &amp; tests.</p>
+        </div>
+
+        <!-- Terraform -->
+        <div class="dashboard-panel rounded-lg p-5 space-y-3 group hover:border-cyberCyan transition">
+          <div class="flex items-center justify-between">
+            <div class="w-9 h-9 rounded bg-cyberCyan/10 border border-cyberCyan/30 flex items-center justify-center text-cyberCyan group-hover:scale-110 transition">
+              <i data-lucide="file-code-2" class="w-5 h-5"></i>
+            </div>
+            <span class="text-[10px] font-mono text-zinc-500">IaC</span>
+          </div>
+          <h4 class="font-mono text-sm font-bold text-white">Terraform</h4>
+          <p class="text-xs text-zinc-400">Declarative cloud provisioning, state locking, and reusable modules.</p>
+        </div>
+
+        <!-- Git & GitHub -->
+        <div class="dashboard-panel rounded-lg p-5 space-y-3 group hover:border-cyberCyan transition">
+          <div class="flex items-center justify-between">
+            <div class="w-9 h-9 rounded bg-cyberCyan/10 border border-cyberCyan/30 flex items-center justify-center text-cyberCyan group-hover:scale-110 transition">
+              <i data-lucide="git-branch" class="w-5 h-5"></i>
+            </div>
+            <span class="text-[10px] font-mono text-zinc-500">VCS</span>
+          </div>
+          <h4 class="font-mono text-sm font-bold text-white">Git &amp; GitHub</h4>
+          <p class="text-xs text-zinc-400">Branching workflows, trunk-based releases, and version controls.</p>
+        </div>
+
+        <!-- Python & Bash -->
+        <div class="dashboard-panel rounded-lg p-5 space-y-3 group hover:border-cyberCyan transition">
+          <div class="flex items-center justify-between">
+            <div class="w-9 h-9 rounded bg-cyberCyan/10 border border-cyberCyan/30 flex items-center justify-center text-cyberCyan group-hover:scale-110 transition">
+              <i data-lucide="terminal" class="w-5 h-5"></i>
+            </div>
+            <span class="text-[10px] font-mono text-zinc-500">SCRIPTING</span>
+          </div>
+          <h4 class="font-mono text-sm font-bold text-white">Python &amp; Bash</h4>
+          <p class="text-xs text-zinc-400">Cloud SDK automation, cron jobs, log scrubbing &amp; system scripts.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- AWS SECTION (AWS.CORE) -->
+    <section id="aws" class="space-y-8">
+      <div class="flex items-center space-x-3 text-xs font-mono text-cyberCyan">
+        <span>03 // CLOUD ARCHITECTURE</span>
+        <div class="h-px bg-gridBorder flex-grow"></div>
+      </div>
+
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+        <div>
+          <span class="text-neonGreen text-[10px] font-mono uppercase tracking-widest block">INFRASTRUCTURE VISUALIZATION</span>
+          <h2 class="text-3xl sm:text-5xl font-bold text-white uppercase font-mono tracking-tight">AWS.CORE</h2>
+        </div>
+        <div class="text-xs font-mono text-zinc-400 bg-panelBg border border-gridBorder px-3 py-1.5 rounded">
+          STATUS: <span class="text-neonGreen">MULTI-AZ COMPLIANT</span>
+        </div>
+      </div>
+
+      <!-- AWS Architecture Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        
+        <!-- EC2 -->
+        <div class="dashboard-panel rounded-lg p-5 space-y-3 border-t-2 border-t-cyberCyan">
+          <div class="text-cyberCyan font-mono text-xs flex justify-between">
+            <span>COMPUTE</span>
+            <i data-lucide="hard-drive" class="w-4 h-4"></i>
+          </div>
+          <h4 class="text-lg font-bold text-white font-mono">EC2</h4>
+          <p class="text-xs text-zinc-400 leading-relaxed">
+            Elastic compute nodes with autoscaling groups and optimized EBS root volumes.
+          </p>
+          <div class="text-[10px] font-mono text-zinc-500 pt-2 border-t border-gridBorder">
+            Traffic Routing: 80 / 443
+          </div>
+        </div>
+
+        <!-- S3 -->
+        <div class="dashboard-panel rounded-lg p-5 space-y-3 border-t-2 border-t-cyberCyan">
+          <div class="text-cyberCyan font-mono text-xs flex justify-between">
+            <span>STORAGE</span>
+            <i data-lucide="database" class="w-4 h-4"></i>
+          </div>
+          <h4 class="text-lg font-bold text-white font-mono">S3</h4>
+          <p class="text-xs text-zinc-400 leading-relaxed">
+            Highly durable object storage with lifecycle policies, encryption and bucket policies.
+          </p>
+          <div class="text-[10px] font-mono text-zinc-500 pt-2 border-t border-gridBorder">
+            Durability: 99.999999999%
+          </div>
+        </div>
+
+        <!-- IAM -->
+        <div class="dashboard-panel rounded-lg p-5 space-y-3 border-t-2 border-t-neonGreen">
+          <div class="text-neonGreen font-mono text-xs flex justify-between">
+            <span>SECURITY</span>
+            <i data-lucide="shield-check" class="w-4 h-4"></i>
+          </div>
+          <h4 class="text-lg font-bold text-white font-mono">IAM</h4>
+          <p class="text-xs text-zinc-400 leading-relaxed">
+            Least-privilege role-based access control, security policies, and credential isolation.
+          </p>
+          <div class="text-[10px] font-mono text-zinc-500 pt-2 border-t border-gridBorder">
+            RBAC: Strict Enforcement
+          </div>
+        </div>
+
+        <!-- VPC -->
+        <div class="dashboard-panel rounded-lg p-5 space-y-3 border-t-2 border-t-cyberBlue">
+          <div class="text-cyberBlue font-mono text-xs flex justify-between">
+            <span>NETWORK</span>
+            <i data-lucide="network" class="w-4 h-4"></i>
+          </div>
+          <h4 class="text-lg font-bold text-white font-mono">VPC</h4>
+          <p class="text-xs text-zinc-400 leading-relaxed">
+            Isolated subnets, NAT gateways, security groups, route tables, and custom peering.
+          </p>
+          <div class="text-[10px] font-mono text-zinc-500 pt-2 border-t border-gridBorder">
+            CIDR: 10.0.0.0/16
+          </div>
+        </div>
+
+        <!-- CloudWatch -->
+        <div class="dashboard-panel rounded-lg p-5 space-y-3 border-t-2 border-t-terminalAmber">
+          <div class="text-terminalAmber font-mono text-xs flex justify-between">
+            <span>METRICS</span>
+            <i data-lucide="activity" class="w-4 h-4"></i>
+          </div>
+          <h4 class="text-lg font-bold text-white font-mono">CloudWatch</h4>
+          <p class="text-xs text-zinc-400 leading-relaxed">
+            Real-time logs collection, synthetic alarms, CPU thresholds, and automated actions.
+          </p>
+          <div class="text-[10px] font-mono text-zinc-500 pt-2 border-t border-gridBorder">
+            Log Latency: &lt; 1s
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- DEVOPS PIPELINE (DEPLOYMENT.PIPELINE) -->
+    <section id="pipeline" class="space-y-8">
+      <div class="flex items-center space-x-3 text-xs font-mono text-cyberCyan">
+        <span>04 // AUTOMATION WORKFLOW</span>
+        <div class="h-px bg-gridBorder flex-grow"></div>
+      </div>
+
+      <div class="space-y-2">
+        <span class="text-neonGreen text-[10px] font-mono uppercase tracking-widest block">END-TO-END PIPELINE</span>
+        <h2 class="text-3xl sm:text-5xl font-bold text-white uppercase font-mono tracking-tight">DEPLOYMENT.PIPELINE</h2>
+        <p class="text-xs sm:text-sm text-zinc-400 font-mono">Continuous integration and deployment loop with automated gates.</p>
+      </div>
+
+      <!-- Interactive Horizontal Pipeline Stream -->
+      <div class="dashboard-panel rounded-xl p-6 sm:p-8 overflow-x-auto">
+        <div class="min-w-[820px] flex items-center justify-between relative py-6">
+          
+          <!-- Continuous Connection Line -->
+          <div class="absolute left-8 right-8 top-1/2 -translate-y-1/2 h-0.5 bg-gridBorder z-0"></div>
+
+          <!-- Stage 1: Code -->
+          <div class="relative z-10 flex flex-col items-center group cursor-pointer">
+            <div class="w-12 h-12 rounded-full bg-panelBg border-2 border-gridBorder group-hover:border-cyberCyan flex items-center justify-center text-zinc-400 group-hover:text-cyberCyan transition duration-300">
+              <i data-lucide="code" class="w-5 h-5"></i>
+            </div>
+            <span class="font-mono text-xs font-bold text-white mt-2">CODE</span>
+            <span class="text-[9px] font-mono text-zinc-500">Commits</span>
+          </div>
+
+          <!-- Stage 2: GitHub -->
+          <div class="relative z-10 flex flex-col items-center group cursor-pointer">
+            <div class="w-12 h-12 rounded-full bg-panelBg border-2 border-gridBorder group-hover:border-cyberCyan flex items-center justify-center text-zinc-400 group-hover:text-cyberCyan transition duration-300">
+              <i data-lucide="git-pull-request" class="w-5 h-5"></i>
+            </div>
+            <span class="font-mono text-xs font-bold text-white mt-2">GITHUB</span>
+            <span class="text-[9px] font-mono text-zinc-500">Triggers</span>
+          </div>
+
+          <!-- Stage 3: Jenkins -->
+          <div class="relative z-10 flex flex-col items-center group cursor-pointer">
+            <div class="w-12 h-12 rounded-full bg-panelBg border-2 border-cyberCyan flex items-center justify-center text-cyberCyan shadow-[0_0_15px_rgba(0,240,255,0.4)] transition duration-300">
+              <i data-lucide="play-circle" class="w-5 h-5"></i>
+            </div>
+            <span class="font-mono text-xs font-bold text-white mt-2">JENKINS</span>
+            <span class="text-[9px] font-mono text-neonGreen">Automate</span>
+          </div>
+
+          <!-- Stage 4: Build -->
+          <div class="relative z-10 flex flex-col items-center group cursor-pointer">
+            <div class="w-12 h-12 rounded-full bg-panelBg border-2 border-gridBorder group-hover:border-cyberCyan flex items-center justify-center text-zinc-400 group-hover:text-cyberCyan transition duration-300">
+              <i data-lucide="wrench" class="w-5 h-5"></i>
+            </div>
+            <span class="font-mono text-xs font-bold text-white mt-2">BUILD</span>
+            <span class="text-[9px] font-mono text-zinc-500">Artifacts</span>
+          </div>
+
+          <!-- Stage 5: Docker -->
+          <div class="relative z-10 flex flex-col items-center group cursor-pointer">
+            <div class="w-12 h-12 rounded-full bg-panelBg border-2 border-gridBorder group-hover:border-neonGreen flex items-center justify-center text-zinc-400 group-hover:text-neonGreen transition duration-300">
+              <i data-lucide="box" class="w-5 h-5"></i>
+            </div>
+            <span class="font-mono text-xs font-bold text-white mt-2">DOCKER</span>
+            <span class="text-[9px] font-mono text-zinc-500">Containers</span>
+          </div>
+
+          <!-- Stage 6: Kubernetes -->
+          <div class="relative z-10 flex flex-col items-center group cursor-pointer">
+            <div class="w-12 h-12 rounded-full bg-panelBg border-2 border-gridBorder group-hover:border-neonGreen flex items-center justify-center text-zinc-400 group-hover:text-neonGreen transition duration-300">
+              <i data-lucide="anchor" class="w-5 h-5"></i>
+            </div>
+            <span class="font-mono text-xs font-bold text-white mt-2">K8s</span>
+            <span class="text-[9px] font-mono text-zinc-500">Pods</span>
+          </div>
+
+          <!-- Stage 7: AWS -->
+          <div class="relative z-10 flex flex-col items-center group cursor-pointer">
+            <div class="w-12 h-12 rounded-full bg-panelBg border-2 border-gridBorder group-hover:border-cyberBlue flex items-center justify-center text-zinc-400 group-hover:text-cyberBlue transition duration-300">
+              <i data-lucide="cloud" class="w-5 h-5"></i>
+            </div>
+            <span class="font-mono text-xs font-bold text-white mt-2">AWS</span>
+            <span class="text-[9px] font-mono text-zinc-500">Production</span>
+          </div>
+
+          <!-- Stage 8: Monitoring -->
+          <div class="relative z-10 flex flex-col items-center group cursor-pointer">
+            <div class="w-12 h-12 rounded-full bg-panelBg border-2 border-gridBorder group-hover:border-terminalAmber flex items-center justify-center text-zinc-400 group-hover:text-terminalAmber transition duration-300">
+              <i data-lucide="activity" class="w-5 h-5"></i>
+            </div>
+            <span class="font-mono text-xs font-bold text-white mt-2">MONITOR</span>
+            <span class="text-[9px] font-mono text-zinc-500">Telemetry</span>
+          </div>
+
+        </div>
+
+        <!-- Explanatory Strip below pipeline -->
+        <div class="mt-6 pt-4 border-t border-gridBorder grid grid-cols-1 md:grid-cols-4 gap-4 text-xs font-mono text-zinc-400">
+          <div>
+            <span class="text-cyberCyan block font-bold">01 / DOCKER</span>
+            <p class="text-[11px] text-zinc-500">Containerizing applications for consistent execution.</p>
+          </div>
+          <div>
+            <span class="text-neonGreen block font-bold">02 / KUBERNETES</span>
+            <p class="text-[11px] text-zinc-500">Orchestrating scalable container workloads across nodes.</p>
+          </div>
+          <div>
+            <span class="text-terminalAmber block font-bold">03 / JENKINS</span>
+            <p class="text-[11px] text-zinc-500">Automating integration pipelines with test assertions.</p>
+          </div>
+          <div>
+            <span class="text-cyberBlue block font-bold">04 / TERRAFORM</span>
+            <p class="text-[11px] text-zinc-500">Provisioning immutable infrastructure via state tracking.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS SHOWCASE -->
+    <section id="projects" class="space-y-8">
+      <div class="flex items-center space-x-3 text-xs font-mono text-cyberCyan">
+        <span>05 // PRODUCTION BUILDS</span>
+        <div class="h-px bg-gridBorder flex-grow"></div>
+      </div>
+
+      <div class="space-y-2">
+        <span class="text-neonGreen text-[10px] font-mono uppercase tracking-widest block">ENGINEERED WORK</span>
+        <h2 class="text-3xl sm:text-5xl font-bold text-white uppercase font-mono tracking-tight">FEATURED PROJECTS</h2>
+        <p class="text-xs sm:text-sm text-zinc-400 font-mono">High-availability architectures and automation repositories.</p>
+      </div>
+
+      <!-- Project Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- Project 01 -->
+        <div class="dashboard-panel rounded-xl p-6 space-y-4 tilt-card flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between text-xs font-mono">
+              <span class="text-cyberCyan font-bold">PROJECT_01</span>
+              <span class="text-neonGreen text-[10px]">PRODUCTION</span>
+            </div>
+            <h3 class="text-xl font-bold text-white">AWS Cloud Infrastructure</h3>
+            
+            <div class="p-3 bg-panelBg rounded border border-gridBorder text-[10px] font-mono text-zinc-400 space-y-1">
+              <div class="text-cyberCyan font-semibold">&gt; TOPOLOGY:</div>
+              <div>Route53 → ALB → AutoScaling VPC (Public/Private)</div>
+              <div>Multi-AZ RDS + S3 Static Bucket</div>
+            </div>
+
+            <div class="space-y-2 text-xs text-zinc-400">
+              <p><strong class="text-zinc-200">Problem:</strong> Manual server setups causing configuration drift and downtime during traffic spikes.</p>
+              <p><strong class="text-zinc-200">Solution:</strong> Architected fault-tolerant VPC with automated load balancing and S3 cloud storage.</p>
+            </div>
+          </div>
+
+          <div class="space-y-4 pt-4 border-t border-gridBorder">
+            <div class="flex flex-wrap gap-1 font-mono text-[10px]">
+              <span class="px-2 py-0.5 rounded bg-panelBg border border-gridBorder text-zinc-300">AWS</span>
+              <span class="px-2 py-0.5 rounded bg-panelBg border border-gridBorder text-zinc-300">EC2</span>
+              <span class="px-2 py-0.5 rounded bg-panelBg border border-gridBorder text-zinc-300">VPC</span>
+              <span class="px-2 py-0.5 rounded bg-panelBg border border-gridBorder text-zinc-300">IAM</span>
+              <span class="px-2 py-0.5 rounded bg-panelBg border border-gridBorder text-zinc-300">S3</span>
+            </div>
+            <div class="flex items-center justify-between pt-1">
+              <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="text-xs font-mono text-cyberCyan hover:text-white flex items-center gap-1">
+                <span>View GitHub Repo</span>
+                <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 02 -->
+        <div class="dashboard-panel rounded-xl p-6 space-y-4 tilt-card flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between text-xs font-mono">
+              <span class="text-cyberCyan font-bold">PROJECT_02</span>
+              <span class="text-neonGreen text-[10px]">CONTAINERIZED</span>
+            </div>
+            <h3 class="text-xl font-bold text-white">Dockerized App Deployment</h3>
+            
+            <div class="p-3 bg-panelBg rounded border border-gridBorder text-[10px] font-mono text-zinc-400 space-y-1">
+              <div class="text-cyberCyan font-semibold">&gt; TOPOLOGY:</div>
+              <div>Dockerfile → Multi-Stage Build → Docker Compose</div>
+              <div>NGINX Reverse Proxy + Linux Host</div>
+            </div>
+
+            <div class="space-y-2 text-xs text-zinc-400">
+              <p><strong class="text-zinc-200">Problem:</strong> "Works on my machine" discrepancy between local testing and remote servers.</p>
+              <p><strong class="text-zinc-200">Solution:</strong> Engineered lightweight Alpine Docker containers with optimized layer caching.</p>
+            </div>
+          </div>
+
+          <div class="space-y-4 pt-4 border-t border-gridBorder">
+            <div class="flex flex-wrap gap-1 font-mono text-[10px]">
+              <span class="px-2 py-0.5 rounded bg-panelBg border border-gridBorder text-zinc-300">Docker</span>
+              <span class="px-2 py-0.5 rounded bg-panelBg border border-gridBorder text-zinc-300">Linux</span>
+              <span class="px-2 py-0.5 rounded bg-panelBg border border-gridBorder text-zinc-300">AWS EC2</span>
+            </div>
+            <div class="flex items-center justify-between pt-1">
+              <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="text-xs font-mono text-cyberCyan hover:text-white flex items-center gap-1">
+                <span>View GitHub Repo</span>
+                <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 03 -->
+        <div class="dashboard-panel rounded-xl p-6 space-y-4 tilt-card flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between text-xs font-mono">
+              <span class="text-cyberCyan font-bold">PROJECT_03</span>
+              <span class="text-neonGreen text-[10px]">AUTOMATED</span>
+            </div>
+            <h3 class="text-xl font-bold text-white">CI/CD Automation Pipeline</h3>
+            
+            <div class="p-3 bg-panelBg rounded border border-gridBorder text-[10px] font-mono text-zinc-400 space-y-1">
+              <div class="text-cyberCyan font-semibold">&gt; TOPOLOGY:</div>
+              <div>Git Hook → Jenkins Master/Agent → SonarQube</div>
+              <div>Automated Image Push → AWS Registry</div>
+            </div>
+
+            <div class="space-y-2 text-xs text-zinc-400">
+              <p><strong class="text-zinc-200">Problem:</strong> Slow release cycles due to manual integration checks and repetitive deployments.</p>
+              <p><strong class="text-zinc-200">Solution:</strong> Created end-to-end declarative Jenkins pipeline reducing deployment time.</p>
+            </div>
+          </div>
+
+          <div class="space-y-4 pt-4 border-t border-gridBorder">
+            <div class="flex flex-wrap gap-1 font-mono text-[10px]">
+              <span class="px-2 py-0.5 rounded bg-panelBg border border-gridBorder text-zinc-300">GitHub</span>
+              <span class="px-2 py-0.5 rounded bg-panelBg border border-gridBorder text-zinc-300">Jenkins</span>
+              <span class="px-2 py-0.5 rounded bg-panelBg border border-gridBorder text-zinc-300">Docker</span>
+              <span class="px-2 py-0.5 rounded bg-panelBg border border-gridBorder text-zinc-300">AWS</span>
+            </div>
+            <div class="flex items-center justify-between pt-1">
+              <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="text-xs font-mono text-cyberCyan hover:text-white flex items-center gap-1">
+                <span>View GitHub Repo</span>
+                <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 04 -->
+        <div class="dashboard-panel rounded-xl p-6 space-y-4 tilt-card flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between text-xs font-mono">
+              <span class="text-cyberCyan font-bold">PROJECT_04</span>
+              <span class="text-neonGreen text-[10px]">ORCHESTRATED</span>
+            </div>
+            <h3 class="text-xl font-bold text-white">Kubernetes Deployment</h3>
+            
+            <div class="p-3 bg-panelBg rounded border border-gridBorder text-[10px] font-mono text-zinc-400 space-y-1">
+              <div class="text-cyberCyan font-semibold">&gt; TOPOLOGY:</div>
+              <div>K8s Ingress Controller → ClusterIP Service</div>
+              <div>Rolling Deployments (3 Pod Replicas) + HPA</div>
+            </div>
+
+            <div class="space-y-2 text-xs text-zinc-400">
+              <p><strong class="text-zinc-200">Problem:</strong> Inability to handle traffic bursts and lack of auto-recovery for crashed services.</p>
+              <p><strong class="text-zinc-200">Solution:</strong> Configured Kubernetes manifests with health probes and zero-downtime rolling updates.</p>
+            </div>
+          </div>
+
+          <div class="space-y-4 pt-4 border-t border-gridBorder">
+            <div class="flex flex-wrap gap-1 font-mono text-[10px]">
+              <span class="px-2 py-0.5 rounded bg-panelBg border border-gridBorder text-zinc-300">Docker</span>
+              <span class="px-2 py-0.5 rounded bg-panelBg border border-gridBorder text-zinc-300">Kubernetes</span>
+              <span class="px-2 py-0.5 rounded bg-panelBg border border-gridBorder text-zinc-300">AWS</span>
+            </div>
+            <div class="flex items-center justify-between pt-1">
+              <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="text-xs font-mono text-cyberCyan hover:text-white flex items-center gap-1">
+                <span>View GitHub Repo</span>
+                <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 05 -->
+        <div class="dashboard-panel rounded-xl p-6 space-y-4 tilt-card flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between text-xs font-mono">
+              <span class="text-cyberCyan font-bold">PROJECT_05</span>
+              <span class="text-neonGreen text-[10px]">IaC_CONTROLLED</span>
+            </div>
+            <h3 class="text-xl font-bold text-white">Infrastructure as Code</h3>
+            
+            <div class="p-3 bg-panelBg rounded border border-gridBorder text-[10px] font-mono text-zinc-400 space-y-1">
+              <div class="text-cyberCyan font-semibold">&gt; TOPOLOGY:</div>
+              <div>main.tf + variables.tf → S3 Remote Backend</div>
+              <div>DynamoDB State Lock → Plan &amp; Apply</div>
+            </div>
+
+            <div class="space-y-2 text-xs text-zinc-400">
+              <p><strong class="text-zinc-200">Problem:</strong> Lack of repeatable cloud environments causing audit failures and human errors.</p>
+              <p><strong class="text-zinc-200">Solution:</strong> Developed modular Terraform scripts to provision secure AWS networks reproducibly.</p>
+            </div>
+          </div>
+
+          <div class="space-y-4 pt-4 border-t border-gridBorder">
+            <div class="flex flex-wrap gap-1 font-mono text-[10px]">
+              <span class="px-2 py-0.5 rounded bg-panelBg border border-gridBorder text-zinc-300">Terraform</span>
+              <span class="px-2 py-0.5 rounded bg-panelBg border border-gridBorder text-zinc-300">AWS</span>
+              <span class="px-2 py-0.5 rounded bg-panelBg border border-gridBorder text-zinc-300">Git</span>
+            </div>
+            <div class="flex items-center justify-between pt-1">
+              <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="text-xs font-mono text-cyberCyan hover:text-white flex items-center gap-1">
+                <span>View GitHub Repo</span>
+                <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Placeholder for upcoming pipeline repo -->
+        <div class="dashboard-panel rounded-xl p-6 border-dashed border-gridBorder flex flex-col justify-center items-center text-center space-y-3">
+          <div class="w-12 h-12 rounded-full bg-panelBg border border-gridBorder flex items-center justify-center text-zinc-500">
+            <i data-lucide="folder-git-2" class="w-6 h-6"></i>
+          </div>
+          <span class="font-mono text-xs text-cyberCyan font-bold uppercase tracking-wider">MORE_PROJECTS_IN_STAGING</span>
+          <p class="text-[11px] font-mono text-zinc-500 max-w-xs">
+            Actively writing new automation playbooks and Helm charts.
+          </p>
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="text-xs font-mono text-zinc-400 hover:text-cyberCyan flex items-center gap-1">
+            <span>EXPLORE GITHUB ARCHIVE</span>
+            <i data-lucide="arrow-up-right" class="w-3 h-3"></i>
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SYSTEM SPECS (DASHBOARD PANEL) -->
+    <section id="specs" class="space-y-6">
+      <div class="flex items-center space-x-3 text-xs font-mono text-cyberCyan">
+        <span>06 // HARDWARE &amp; RUNTIME PARAMETERS</span>
+        <div class="h-px bg-gridBorder flex-grow"></div>
+      </div>
+
+      <div class="dashboard-panel rounded-xl p-6 sm:p-8 space-y-6">
+        <div class="flex items-center justify-between border-b border-gridBorder pb-4">
+          <div class="flex items-center space-x-3">
+            <i data-lucide="sliders" class="w-5 h-5 text-cyberCyan"></i>
+            <h2 class="text-lg sm:text-xl font-bold text-white font-mono uppercase">SYSTEM.SPECS</h2>
+          </div>
+          <span class="text-xs font-mono text-neonGreen">LOAD: OPTIMAL</span>
+        </div>
+
+        <!-- Specs Monitor Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 font-mono text-xs">
+          
+          <div class="p-3 bg-panelBg rounded border border-gridBorder space-y-1">
+            <span class="text-zinc-500 text-[10px] block">ENGINEER</span>
+            <span class="text-white font-bold text-sm">Ankit Khandelwal</span>
+          </div>
+
+          <div class="p-3 bg-panelBg rounded border border-gridBorder space-y-1">
+            <span class="text-zinc-500 text-[10px] block">PRIMARY CLOUD</span>
+            <span class="text-cyberCyan font-bold text-sm">Amazon Web Services (AWS)</span>
+          </div>
+
+          <div class="p-3 bg-panelBg rounded border border-gridBorder space-y-1">
+            <span class="text-zinc-500 text-[10px] block">OPERATING SYSTEM</span>
+            <span class="text-white font-bold text-sm">Linux / Unix Environment</span>
+          </div>
+
+          <div class="p-3 bg-panelBg rounded border border-gridBorder space-y-1">
+            <span class="text-zinc-500 text-[10px] block">LANGUAGES</span>
+            <span class="text-neonGreen font-bold text-sm">Python • Bash</span>
+          </div>
+
+          <div class="p-3 bg-panelBg rounded border border-gridBorder space-y-1">
+            <span class="text-zinc-500 text-[10px] block">DEVOPS STACK</span>
+            <span class="text-white font-bold text-sm">Git • Docker • Kubernetes</span>
+          </div>
+
+          <div class="p-3 bg-panelBg rounded border border-gridBorder space-y-1">
+            <span class="text-zinc-500 text-[10px] block">CI / CD ENGINE</span>
+            <span class="text-white font-bold text-sm">Jenkins Automations</span>
+          </div>
+
+          <div class="p-3 bg-panelBg rounded border border-gridBorder space-y-1">
+            <span class="text-zinc-500 text-[10px] block">INFRASTRUCTURE AS CODE</span>
+            <span class="text-cyberCyan font-bold text-sm">Terraform</span>
+          </div>
+
+          <div class="p-3 bg-panelBg rounded border border-gridBorder space-y-1">
+            <span class="text-zinc-500 text-[10px] block">DECLARATIVE CONFIG</span>
+            <span class="text-white font-bold text-sm">YAML Manifests</span>
+          </div>
+
+          <div class="p-3 bg-panelBg rounded border border-gridBorder space-y-1">
+            <span class="text-zinc-500 text-[10px] block">OPERATIONAL STATUS</span>
+            <span class="text-neonGreen font-bold text-sm">Building • Deploying • Automating</span>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- LEARNING PATH (VERTICAL DEVOPS ROADMAP) -->
+    <section id="roadmap" class="space-y-8">
+      <div class="flex items-center space-x-3 text-xs font-mono text-cyberCyan">
+        <span>07 // TECHNICAL TRAJECTORY</span>
+        <div class="h-px bg-gridBorder flex-grow"></div>
+      </div>
+
+      <div class="space-y-2">
+        <span class="text-neonGreen text-[10px] font-mono uppercase tracking-widest block">CHRONOLOGICAL EVOLUTION</span>
+        <h2 class="text-3xl sm:text-5xl font-bold text-white uppercase font-mono tracking-tight">DEVOPS ROADMAP</h2>
+      </div>
+
+      <div class="max-w-2xl mx-auto relative pl-6 border-l-2 border-gridBorder space-y-8 font-mono">
+        
+        <!-- Step 1 -->
+        <div class="relative space-y-1 group">
+          <div class="absolute -left-[31px] top-1 w-3.5 h-3.5 rounded-full bg-neonGreen border-4 border-deepBg"></div>
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-white text-sm">LINUX FUNDAMENTALS</span>
+            <span class="text-neonGreen text-[10px]">✓ COMPLETE</span>
+          </div>
+          <p class="text-xs text-zinc-400">File structures, users, access permissions, process memory &amp; CLI mastery.</p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="relative space-y-1 group">
+          <div class="absolute -left-[31px] top-1 w-3.5 h-3.5 rounded-full bg-neonGreen border-4 border-deepBg"></div>
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-white text-sm">NETWORKING &amp; SECURITY</span>
+            <span class="text-neonGreen text-[10px]">✓ COMPLETE</span>
+          </div>
+          <p class="text-xs text-zinc-400">TCP/IP, DNS, Subnetting, Reverse Proxies, SSH keys, SSL/TLS certs.</p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="relative space-y-1 group">
+          <div class="absolute -left-[31px] top-1 w-3.5 h-3.5 rounded-full bg-neonGreen border-4 border-deepBg"></div>
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-white text-sm">AWS CORE SERVICES</span>
+            <span class="text-neonGreen text-[10px]">✓ COMPLETE</span>
+          </div>
+          <p class="text-xs text-zinc-400">VPC isolation, IAM governance, EC2 instances, S3 storage, and CloudWatch alarms.</p>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="relative space-y-1 group">
+          <div class="absolute -left-[31px] top-1 w-3.5 h-3.5 rounded-full bg-neonGreen border-4 border-deepBg"></div>
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-white text-sm">DOCKER CONTAINERIZATION</span>
+            <span class="text-neonGreen text-[10px]">✓ COMPLETE</span>
+          </div>
+          <p class="text-xs text-zinc-400">Writing efficient Dockerfiles, compose multi-service stacks, network layers.</p>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="relative space-y-1 group">
+          <div class="absolute -left-[31px] top-1 w-3.5 h-3.5 rounded-full bg-cyberCyan border-4 border-deepBg animate-pulse"></div>
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-white text-sm">KUBERNETES &amp; CI/CD</span>
+            <span class="text-cyberCyan text-[10px]">↻ IN PROGRESS</span>
+          </div>
+          <p class="text-xs text-zinc-400">Writing Declarative Jenkins pipelines, managing K8s Pods, Services, and Deployments.</p>
+        </div>
+
+        <!-- Step 6 -->
+        <div class="relative space-y-1 group">
+          <div class="absolute -left-[31px] top-1 w-3.5 h-3.5 rounded-full bg-cyberCyan border-4 border-deepBg animate-pulse"></div>
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-white text-sm">TERRAFORM &amp; IaC</span>
+            <span class="text-cyberCyan text-[10px]">↻ IN PROGRESS</span>
+          </div>
+          <p class="text-xs text-zinc-400">Automating cloud provisioning with state locking and reusable module packages.</p>
+        </div>
+
+        <!-- Step 7 -->
+        <div class="relative space-y-1 group">
+          <div class="absolute -left-[31px] top-1 w-3.5 h-3.5 rounded-full bg-zinc-600 border-4 border-deepBg"></div>
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-zinc-400 text-sm">ADVANCED CLOUD INFRASTRUCTURE</span>
+            <span class="text-zinc-500 text-[10px]">○ NEXT</span>
+          </div>
+          <p class="text-xs text-zinc-500">Zero-Trust architecture, multi-region failovers, and cost telemetry governance.</p>
+        </div>
+
+        <!-- Step 8 -->
+        <div class="relative space-y-1 group">
+          <div class="absolute -left-[31px] top-1 w-3.5 h-3.5 rounded-full bg-zinc-600 border-4 border-deepBg"></div>
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-zinc-400 text-sm">AUTOMATION &amp; MASSIVE SCALING</span>
+            <span class="text-zinc-500 text-[10px]">○ NEXT</span>
+          </div>
+          <p class="text-xs text-zinc-500">Autonomous GitOps reconcilers, chaos testing, and auto-remediating alerts.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- GITHUB & ACTIVITY -->
+    <section id="github" class="space-y-6">
+      <div class="flex items-center space-x-3 text-xs font-mono text-cyberCyan">
+        <span>08 // CODE TELEMETRY</span>
+        <div class="h-px bg-gridBorder flex-grow"></div>
+      </div>
+
+      <div class="dashboard-panel rounded-xl p-6 space-y-6">
+        <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-gridBorder pb-4">
+          <div class="flex items-center space-x-3">
+            <i data-lucide="github" class="w-5 h-5 text-cyberCyan"></i>
+            <div>
+              <h3 class="font-mono text-sm font-bold text-white">GITHUB PROFILE &amp; CODEBASE</h3>
+              <p class="text-[11px] font-mono text-zinc-500">Open source infrastructure playbooks and repositories.</p>
+            </div>
+          </div>
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="font-mono text-xs text-cyberCyan hover:text-white flex items-center gap-1 border border-cyberCyan/40 px-3 py-1.5 rounded hover:bg-cyberCyan/10 transition">
+            <span>VISIT GITHUB</span>
+            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+          </a>
+        </div>
+
+        <!-- Metric Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono text-xs">
+          <div class="p-4 bg-panelBg rounded border border-gridBorder space-y-1">
+            <span class="text-zinc-500 text-[10px]">VERSION CONTROL</span>
+            <div class="text-white font-bold text-lg">Git-Driven</div>
+            <p class="text-[11px] text-zinc-400">Trunk-based development &amp; atomic commits</p>
+          </div>
+
+          <div class="p-4 bg-panelBg rounded border border-gridBorder space-y-1">
+            <span class="text-zinc-500 text-[10px]">PRIMARY CODEBASES</span>
+            <div class="text-cyberCyan font-bold text-lg">Python &amp; Shell</div>
+            <p class="text-[11px] text-zinc-400">Automation scripts &amp; IaC manifests</p>
+          </div>
+
+          <div class="p-4 bg-panelBg rounded border border-gridBorder space-y-1">
+            <span class="text-zinc-500 text-[10px]">DEPLOYMENT REPOSITORIES</span>
+            <div class="text-neonGreen font-bold text-lg">Public &amp; Clean</div>
+            <p class="text-[11px] text-zinc-400">Structured READMEs &amp; setup guides</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CERTIFICATIONS -->
+    <section id="certifications" class="space-y-6">
+      <div class="flex items-center space-x-3 text-xs font-mono text-cyberCyan">
+        <span>09 // VERIFIED CREDENTIALS</span>
+        <div class="h-px bg-gridBorder flex-grow"></div>
+      </div>
+
+      <div class="space-y-2">
+        <h2 class="text-2xl sm:text-4xl font-bold text-white uppercase font-mono tracking-tight">CERTIFICATIONS</h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        
+        <div class="dashboard-panel rounded-lg p-5 border-dashed border-gridBorder space-y-2">
+          <div class="flex items-center justify-between text-xs font-mono text-zinc-500">
+            <span>AWS CREDENTIAL</span>
+            <i data-lucide="award" class="w-4 h-4 text-cyberCyan"></i>
+          </div>
+          <h4 class="font-mono text-sm font-bold text-white">AWS Certified Cloud Practitioner / SAA</h4>
+          <span class="text-[10px] font-mono text-terminalAmber block">CERTIFICATION.DATA — ADD SOON</span>
+        </div>
+
+        <div class="dashboard-panel rounded-lg p-5 border-dashed border-gridBorder space-y-2">
+          <div class="flex items-center justify-between text-xs font-mono text-zinc-500">
+            <span>LINUX &amp; CONTAINERS</span>
+            <i data-lucide="award" class="w-4 h-4 text-cyberCyan"></i>
+          </div>
+          <h4 class="font-mono text-sm font-bold text-white">Docker &amp; Kubernetes Fundamentals</h4>
+          <span class="text-[10px] font-mono text-terminalAmber block">CERTIFICATION.DATA — ADD SOON</span>
+        </div>
+
+        <div class="dashboard-panel rounded-lg p-5 border-dashed border-gridBorder space-y-2">
+          <div class="flex items-center justify-between text-xs font-mono text-zinc-500">
+            <span>INFRASTRUCTURE</span>
+            <i data-lucide="award" class="w-4 h-4 text-cyberCyan"></i>
+          </div>
+          <h4 class="font-mono text-sm font-bold text-white">HashiCorp Certified: Terraform Associate</h4>
+          <span class="text-[10px] font-mono text-terminalAmber block">CERTIFICATION.DATA — ADD SOON</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CONTACT / TERMINAL CONNECT -->
+    <section id="contact" class="space-y-6 pb-12">
+      <div class="flex items-center space-x-3 text-xs font-mono text-cyberCyan">
+        <span>10 // ESTABLISH CONNECTION</span>
+        <div class="h-px bg-gridBorder flex-grow"></div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Left: Details -->
+        <div class="lg:col-span-5 space-y-6">
+          <div class="space-y-2">
+            <span class="text-neonGreen text-[10px] font-mono uppercase tracking-widest block">INTERCONNECT PORT</span>
+            <h2 class="text-3xl sm:text-5xl font-bold text-white uppercase font-mono tracking-tight">$ connect</h2>
+            <p class="text-xs sm:text-sm text-zinc-400 font-mono">
+              Ready for opportunities in Cloud Architecture, DevOps Engineering, and Deployment Automation.
+            </p>
+          </div>
+
+          <div class="dashboard-panel rounded-xl p-5 space-y-4 font-mono text-xs">
+            <div class="flex items-center space-x-3">
+              <i data-lucide="mail" class="w-4 h-4 text-cyberCyan"></i>
+              <div>
+                <span class="text-zinc-500 text-[10px] block">DIRECT EMAIL</span>
+                <a href="mailto:contact@ankit.dev" class="text-white hover:text-cyberCyan transition">contact@ankit.dev</a>
+              </div>
+            </div>
+
+            <div class="flex items-center space-x-3">
+              <i data-lucide="linkedin" class="w-4 h-4 text-cyberCyan"></i>
+              <div>
+                <span class="text-zinc-500 text-[10px] block">LINKEDIN PROFILE</span>
+                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="text-white hover:text-cyberCyan transition">linkedin.com/in/ankit-devops</a>
+              </div>
+            </div>
+
+            <div class="flex items-center space-x-3">
+              <i data-lucide="github" class="w-4 h-4 text-cyberCyan"></i>
+              <div>
+                <span class="text-zinc-500 text-[10px] block">GITHUB PORTAL</span>
+                <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="text-white hover:text-cyberCyan transition">github.com/ankit-cloud</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Interactive Terminal Form -->
+        <div class="lg:col-span-7 dashboard-panel rounded-xl p-6 sm:p-8 font-mono text-xs">
+          <form id="contact-form" class="space-y-4" onsubmit="handleFormSubmit(event)">
+            <div class="text-zinc-500 border-b border-gridBorder pb-3 flex justify-between items-center">
+              <span>MESSAGE_TRANSMITTER.sh</span>
+              <span class="text-neonGreen">SOCKET_OPEN</span>
+            </div>
+
+            <div>
+              <label class="block text-zinc-400 mb-1">&gt; SENDER_NAME:</label>
+              <input type="text" required placeholder="John Doe / Recruiter" class="w-full bg-panelBg border border-gridBorder rounded px-3 py-2 text-white focus:outline-none focus:border-cyberCyan transition" />
+            </div>
+
+            <div>
+              <label class="block text-zinc-400 mb-1">&gt; SENDER_EMAIL:</label>
+              <input type="email" required placeholder="recruiter@enterprise.com" class="w-full bg-panelBg border border-gridBorder rounded px-3 py-2 text-white focus:outline-none focus:border-cyberCyan transition" />
+            </div>
+
+            <div>
+              <label class="block text-zinc-400 mb-1">&gt; PAYLOAD_BODY (MESSAGE):</label>
+              <textarea rows="4" required placeholder="Let's connect regarding a Cloud & DevOps Engineer position..." class="w-full bg-panelBg border border-gridBorder rounded px-3 py-2 text-white focus:outline-none focus:border-cyberCyan transition resize-none"></textarea>
+            </div>
+
+            <button type="submit" id="submit-btn" class="w-full py-3 bg-cyberCyan text-black font-bold uppercase tracking-wider rounded hover:bg-white hover:shadow-[0_0_20px_rgba(0,240,255,0.8)] transition flex items-center justify-center gap-2">
+              <i data-lucide="send" class="w-4 h-4"></i>
+              <span>SEND MESSAGE →</span>
+            </button>
+
+            <!-- Status message container -->
+            <div id="form-status" class="hidden text-center text-xs font-mono text-neonGreen pt-2">
+              [+] PACKET TRANSMITTED SUCCESSFULLY. THANK YOU!
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="relative z-10 border-t border-gridBorder bg-[#05070B] py-10 px-4 text-center font-mono text-xs text-zinc-500 space-y-4">
+    <div class="text-white font-bold tracking-widest">
+      ⚡ BUILD • DEPLOY • AUTOMATE • SCALE ⚡
+    </div>
+
+    <div class="flex flex-wrap justify-center items-center gap-4 text-[11px] text-zinc-400">
+      <span>SYSTEM.STATUS : <span class="text-neonGreen">ONLINE</span></span>
+      <span>•</span>
+      <span>CLOUD.STATUS : <span class="text-cyberCyan">ACTIVE ☁️</span></span>
+      <span>•</span>
+      <span>GRID.PORT : <span class="text-cyberCyan">ACTIVE ☁️</span></span>
+    </div>
+
+    <p class="text-[10px] text-zinc-600">
+      &copy; 2026 Ankit Khandelwal. Cloud &amp; DevOps Command Center. All architectures optimized.
+    </p>
+  </footer>
+
+  <!-- CLIENT SCRIPTS & INTERACTIONS -->
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Mobile nav toggle
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const mobileNav = document.getElementById('mobile-nav');
+
+    menuBtn.addEventListener('click', () => {
+      mobileNav.classList.toggle('hidden');
+    });
+
+    mobileNav.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => mobileNav.classList.add('hidden'));
+    });
+
+    // Dynamic Role Typing Effect
+    const roles = [
+      "AWS ENGINEER",
+      "DEVOPS ENGINEER",
+      "CLOUD AUTOMATION",
+      "INFRASTRUCTURE AS CODE"
+    ];
+    let currentRoleIdx = 0;
+    let charIdx = 0;
+    let isDeleting = false;
+    const cyclerEl = document.getElementById("role-cycler");
+
+    function typeEffect() {
+      const currentRole = roles[currentRoleIdx];
+      
+      if (isDeleting) {
+        cyclerEl.textContent = currentRole.substring(0, charIdx - 1);
+        charIdx--;
+      } else {
+        cyclerEl.textContent = currentRole.substring(0, charIdx + 1);
+        charIdx++;
+      }
+
+      let typingSpeed = isDeleting ? 40 : 90;
+
+      if (!isDeleting && charIdx === currentRole.length) {
+        typingSpeed = 1800; // Pause at end
+        isDeleting = true;
+      } else if (isDeleting && charIdx === 0) {
+        isDeleting = false;
+        currentRoleIdx = (currentRoleIdx + 1) % roles.length;
+        typingSpeed = 400;
+      }
+
+      setTimeout(typeEffect, typingSpeed);
+    }
+    typeEffect();
+
+    // Subtle Particle Background
+    const canvas = document.getElementById("particle-canvas");
+    const ctx = canvas.getContext("2d");
+
+    let particles = [];
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
+    class Particle {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 0.3;
+        this.vy = (Math.random() - 0.5) * 0.3;
+        this.size = Math.random() * 1.5 + 0.5;
+        this.alpha = Math.random() * 0.4 + 0.1;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+          this.reset();
+        }
+      }
+      draw() {
+        ctx.fillStyle = `rgba(0, 240, 255, ${this.alpha})`;
+        ctx.fillRect(this.x, this.y, this.size, this.size);
+      }
+    }
+
+    for (let i = 0; i < 45; i++) {
+      particles.push(new Particle());
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    // Form Terminal Feedback
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      const status = document.getElementById('form-status');
+      
+      btn.innerHTML = `<span>TRANSMITTING...</span>`;
+      btn.disabled = true;
+
+      setTimeout(() => {
+        btn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i><span>TRANSMITTED</span>`;
+        lucide.createIcons();
+        status.classList.remove('hidden');
+        e.target.reset();
+      }, 900);
+    }
+  </script>
+</body>
+</html>
